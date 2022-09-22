@@ -15,3 +15,5 @@ Cargo.lock
 
 *.db
 history.txt
+
+data/

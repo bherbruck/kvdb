@@ -37,7 +37,8 @@
 				"rust-lang.rust-analyzer",
 				"tamasfe.even-better-toml",
 				"serayuzgur.crates",
-				"github.copilot"
+				"github.copilot",
+				"ms-azuretools.vscode-docker"
 			]
 		}
 	},
