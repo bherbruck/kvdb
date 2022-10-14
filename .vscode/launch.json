@@ -7,34 +7,90 @@
     {
       "type": "lldb",
       "request": "launch",
-      "name": "Debug executable 'kvdb'",
+      "name": "Debug unit tests in library 'kvdb-core'",
       "cargo": {
         "args": [
-          "build",
-          "--bin=kvdb",
-          "--package=kvdb"
+          "test",
+          "--no-run",
+          "--lib",
+          "--package=kvdb-core"
         ],
         "filter": {
-          "name": "kvdb",
-          "kind": "bin"
+          "name": "kvdb-core",
+          "kind": "lib"
         }
       },
-      "args": ["./test.db"],
+      "args": [],
       "cwd": "${workspaceFolder}"
     },
     {
       "type": "lldb",
       "request": "launch",
-      "name": "Debug unit tests in executable 'kvdb'",
+      "name": "Debug executable 'kvdb-cli'",
+      "cargo": {
+        "args": [
+          "build",
+          "--bin=kvdb-cli",
+          "--package=kvdb-cli"
+        ],
+        "filter": {
+          "name": "kvdb-cli",
+          "kind": "bin"
+        }
+      },
+      "args": ["./debug.db"],
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug unit tests in executable 'kvdb-cli'",
       "cargo": {
         "args": [
           "test",
           "--no-run",
-          "--bin=kvdb",
-          "--package=kvdb"
+          "--bin=kvdb-cli",
+          "--package=kvdb-cli"
         ],
         "filter": {
-          "name": "kvdb",
+          "name": "kvdb-cli",
+          "kind": "bin"
+        }
+      },
+      "args": [],
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug executable 'kvdb-server'",
+      "cargo": {
+        "args": [
+          "build",
+          "--bin=kvdb-server",
+          "--package=kvdb-server"
+        ],
+        "filter": {
+          "name": "kvdb-server",
+          "kind": "bin"
+        }
+      },
+      "args": [],
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug unit tests in executable 'kvdb-server'",
+      "cargo": {
+        "args": [
+          "test",
+          "--no-run",
+          "--bin=kvdb-server",
+          "--package=kvdb-server"
+        ],
+        "filter": {
+          "name": "kvdb-server",
           "kind": "bin"
         }
       },
