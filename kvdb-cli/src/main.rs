@@ -1,8 +1,7 @@
+use kvdb_core::Kvdb;
 use rustyline::error::ReadlineError;
 use rustyline::Editor;
-use std::collections::HashMap;
 use std::env::args;
-use std::fs::{read_to_string, write};
 use std::io::{Error, ErrorKind};
 
 fn main() -> Result<(), Error> {
@@ -70,59 +69,4 @@ fn parse_input(input: &str) -> Result<KvdbCommand, Error> {
     let key = args[1].trim().to_string();
     let value = args[2..].join(" ").trim().to_string();
     Ok(KvdbCommand { verb, key, value })
-}
-
-fn parse_db_data(db_raw: &str) -> HashMap<String, String> {
-    let db = db_raw.lines().fold(HashMap::new(), |mut acc, line| {
-        let (key, value) = line.split_once(' ').unwrap();
-        acc.insert(key.to_string(), value.to_string());
-        acc
-    });
-    db
-}
-
-struct Kvdb {
-    path: String,
-    map: HashMap<String, String>,
-}
-
-impl Kvdb {
-    fn new(path: String) -> Kvdb {
-        let contents = match read_to_string(&path) {
-            Ok(contents) => contents,
-            Err(_) => {
-                let contents = String::new();
-                write(&path, &contents).unwrap();
-                contents
-            }
-        };
-
-        let map = parse_db_data(&contents);
-
-        Kvdb { path, map }
-    }
-
-    fn get(&self, key: &str) -> Option<String> {
-        self.map.get(key).map(|value| value.to_string())
-    }
-
-    fn set(&mut self, key: &str, value: &str) {
-        self.map.insert(key.to_string(), value.to_string());
-    }
-
-    fn del(&mut self, key: &str) {
-        self.map.remove(key);
-    }
-
-    fn flush(&mut self) {
-        let db_raw = self
-            .map
-            .iter()
-            .fold(String::new(), |mut acc, (key, value)| {
-                let line = format!("{} {}\n", key, value);
-                acc.push_str(&line);
-                acc
-            });
-        write(&self.path, db_raw).expect("Could not write to db");
-    }
 }
