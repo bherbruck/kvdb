@@ -31,14 +31,15 @@ fn main() -> Result<(), Error> {
                 break;
             }
         };
-        let KvdbCommand { verb, key, value } = parse_input(&input)?;
+
+        let KvdbCommand { verb, key, value } = parse_input(&input).unwrap_or_default();
         match verb.to_lowercase().as_str() {
             "get" => {
                 let value = db.get(&key).unwrap_or_default();
                 println!("{value}");
             }
             "set" => match (&key, &value) {
-                i if i.0.is_empty() || i.1.is_empty() => eprintln!("Error: input error"),
+                i if i.0.is_empty() || i.1.is_empty() => continue,
                 _ => {
                     db.set(&key, &value);
                     db.flush();
@@ -58,6 +59,16 @@ struct KvdbCommand {
     verb: String,
     key: String,
     value: String,
+}
+
+impl Default for KvdbCommand {
+    fn default() -> Self {
+        KvdbCommand {
+            verb: "".to_string(),
+            key: "".to_string(),
+            value: "".to_string(),
+        }
+    }
 }
 
 fn parse_input(input: &str) -> Result<KvdbCommand, Error> {
