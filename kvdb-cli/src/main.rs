@@ -7,9 +7,16 @@ use std::io::{Error, ErrorKind};
 fn main() -> Result<(), Error> {
     let path = args().nth(1).expect("Database file not specified");
 
-    // TODO: add an execute command that skips the shell
-
     let mut db = Kvdb::new(path);
+    
+    let command_string = args().nth(2);
+
+    // if a command was specified, execute it and exit
+    if let Some(command_string) = command_string {
+        let command = parse_input(&command_string)?;
+        execute_command(&mut db, command);
+        return Ok(());
+    }
 
     let mut rl = Editor::<()>::new().unwrap();
 
@@ -32,27 +39,32 @@ fn main() -> Result<(), Error> {
             }
         };
 
-        let KvdbCommand { verb, key, value } = parse_input(&input).unwrap_or_default();
-        match verb.to_lowercase().as_str() {
-            "get" => {
-                let value = db.get(&key).unwrap_or_default();
-                println!("{value}");
-            }
-            "set" => match (&key, &value) {
-                i if i.0.is_empty() || i.1.is_empty() => continue,
-                _ => {
-                    db.set(&key, &value);
-                    db.flush();
-                }
-            },
-            "del" => {
-                db.del(&key);
-                db.flush();
-            }
-            _ => (),
-        }
+        let command = parse_input(&input).unwrap_or_default();
+        execute_command(&mut db, command);
     }
     Ok(())
+}
+
+fn execute_command(db: &mut Kvdb, command: KvdbCommand) {
+    let KvdbCommand { verb, key, value } = command;
+    match verb.to_lowercase().as_str() {
+        "get" => {
+            let value = db.get(&key).unwrap_or_default();
+            println!("{value}");
+        }
+        "set" => match (&key, &value) {
+            i if i.0.is_empty() || i.1.is_empty() => (),
+            _ => {
+                db.set(&key, &value);
+                db.flush();
+            }
+        },
+        "del" => {
+            db.del(&key);
+            db.flush();
+        }
+        _ => (),
+    }
 }
 
 struct KvdbCommand {
