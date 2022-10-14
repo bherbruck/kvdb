@@ -28,19 +28,3 @@ bar
 ```
 kvdb> del foo
 ```
-
-## Docker usage
-
-#### Build the image
-
-```
-$ docker build -t kvdb .
-```
-
-#### Start a kvdb interactive shell
-
-```
-$ docker run -it --rm -v $(pwd)/data:/data kvdb
-```
-
-The docker image uses `/data/data.db` as the database file.
